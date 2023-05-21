@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template.html}">
+<head>
+    <meta charset="utf-8">
+    <title>Liste des Produits</title>
+</head>
+<body>
+<div layout:fragment="Mycontent">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Liste des Produits
+            </div>
+<br>
+            <form action="filter" method="get">
+                <div class="row">
+                  <div class="col-3">
+                    <input type="text" class="form-control" name="nom" placeholder="Nom de produit">
+                  </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+
+                    </div>
+                </div>
+            </form>
+            <br>
+            <div th:if="${foundMessage !=null}" class="alert alert-primary" role="alert" >Product found : </div>
+            <br>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom Produit</th>
+                        <th>Prix</th>
+                        <th>Date de creation</th>
+                        <th>Categorie</th>
+                    </tr>
+                    <tr th:each="p:${produits.content}">
+                        <td th:text="${p.idProduit}"></td>
+                        <td th:text="${p.nomProduit}"></td>
+                        <td th:text="${p.prixProduit}"></td>
+                        <td th:text="${p.dateCreation}"></td>
+                        <td th:text="${p.categorie.nomCat}"></td>
+<!--                        <td th:text="${p.categorie.idCat}"></td>-->
+                        <td sec:authorize="hasRole('ADMIN')" >
+                            <a onclick="return confirm('Etes-vous sûr ?')" class="btn btn-danger"
+                               th:href="@{supprimerProduit(id=${p.idProduit},page=${currentPage},size=${size})}">Supprimer</a></td>
+                        <td sec:authorize="hasRole('ADMIN')" >
+                            <a class="btn btn-success" th:href="@{modifierProduit(id=${p.idProduit})}">Modifier</a></td>
+
+
+                    </tr>
+                </table>
+                <ul class="nav nav-pills">
+                    <li th:each="page,status:${pages}">
+                        <a th:class="${status.index==currentPage?'btn btn-primary':'btn'}"
+                           th:href="@{ ListeProduits(page=${status.index}, size=${size} )}"
+                           th:text="${status.index }"></a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
